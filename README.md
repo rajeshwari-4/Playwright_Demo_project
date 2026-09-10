@@ -58,6 +58,25 @@ npx playwright test e2e/tests/locator.spec.ts
 npx playwright show-report
 ```
 
+## Allure reporting
+
+Test results are also collected as [Allure](https://allurereport.org/) results via `allure-playwright`.
+
+```bash
+# Run tests (writes results to allure-results/)
+npm test
+
+# Generate the HTML report from the results
+npm run allure:generate
+
+# Open the generated report locally
+npm run allure:open
+```
+
 ## Continuous Integration
 
-Tests run automatically via GitHub Actions on every push and pull request to `main`/`master` (see `.github/workflows/playwright.yml`). The HTML report is uploaded as a build artifact.
+Tests run automatically via GitHub Actions on every push and pull request to `main`/`master` (see `.github/workflows/playwright.yml`).
+
+- The Playwright HTML report is uploaded as a build artifact.
+- The Allure report is generated and published to GitHub Pages on every run of `main`/`master`, with history carried over from the previous run. Once GitHub Pages is enabled for this repo (Settings → Pages → Source: `gh-pages` branch), the latest report is available at:
+  `https://rajeshwari-4.github.io/Playwright_Demo_project/`
