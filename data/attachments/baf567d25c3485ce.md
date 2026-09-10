@@ -1,0 +1,182 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: Assertions.spec.ts >> Comprehensive Playwright Assertions Examples >> Promise-based Assertions
+- Location: e2e/tests/Assertions.spec.ts:234:7
+
+# Error details
+
+```
+Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: "text"
+Received: null
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e4]:
+  - generic [ref=e6]:
+    - generic [ref=e7]:
+      - img "company-branding"
+    - generic [ref=e8]:
+      - heading "Login" [level=5] [ref=e9]
+      - generic [ref=e10]:
+        - generic [ref=e12]:
+          - paragraph [ref=e13]: "Username : Admin"
+          - paragraph [ref=e14]: "Password : admin123"
+        - generic [ref=e15]:
+          - generic [ref=e17]:
+            - generic [ref=e18]:
+              - generic [ref=e19]: 
+              - generic [ref=e20]: Username
+            - textbox "Username" [active] [ref=e22]
+          - generic [ref=e24]:
+            - generic [ref=e25]:
+              - generic [ref=e26]: 
+              - generic [ref=e27]: Password
+            - textbox "Password" [ref=e29]
+          - button "Login" [ref=e31] [cursor=pointer]
+          - paragraph [ref=e33] [cursor=pointer]: Forgot your password?
+      - generic [ref=e34]:
+        - generic [ref=e35]:
+          - link [ref=e36] [cursor=pointer]:
+            - /url: https://www.linkedin.com/company/orangehrm/mycompany/
+          - link [ref=e39] [cursor=pointer]:
+            - /url: https://www.facebook.com/OrangeHRM/
+          - link [ref=e42] [cursor=pointer]:
+            - /url: https://twitter.com/orangehrm?lang=en
+          - link [ref=e45] [cursor=pointer]:
+            - /url: https://www.youtube.com/c/OrangeHRMInc
+        - generic [ref=e48]:
+          - paragraph [ref=e49]: OrangeHRM OS 5.9
+          - paragraph [ref=e50]:
+            - text: © 2005 - 2026
+            - link "OrangeHRM, Inc" [ref=e51] [cursor=pointer]:
+              - /url: http://www.orangehrm.com
+            - text: . All rights reserved.
+  - generic [ref=e52]:
+    - img "orangehrm-logo"
+```
+
+# Test source
+
+```ts
+  139 |     expect(pageTitle).not.toBeFalsy();
+  140 |   });
+  141 | 
+  142 |   // ===== LOGIN TEST WITH MULTIPLE ASSERTIONS =====
+  143 |   test('Complete Login Test - Multiple Assertions', async ({ page }) => {
+  144 |     // Check initial page state
+  145 |     await expect(page).toHaveURL(URL);
+  146 |     await expect(page).toHaveTitle(/OrangeHRM/i);
+  147 | 
+  148 |     // Check username field
+  149 |     const usernameField = page.getByPlaceholder('Username');
+  150 |     await expect(usernameField).toBeVisible();
+  151 |     await expect(usernameField).toBeEditable();
+  152 |     await expect(usernameField).toBeEmpty();
+  153 | 
+  154 |     // Fill username
+  155 |     await usernameField.fill('Admin');
+  156 |     await expect(usernameField).toHaveValue('Admin');
+  157 | 
+  158 |     // Check password field
+  159 |     const passwordField = page.getByRole('textbox', { name: 'password' });
+  160 |     await expect(passwordField).toBeVisible();
+  161 |     await expect(passwordField).toBeEditable();
+  162 | 
+  163 |     // Fill password
+  164 |     await passwordField.fill('admin123');
+  165 |     await expect(passwordField).toHaveValue('admin123');
+  166 | 
+  167 |     // Check login button
+  168 |     const loginButton = page.getByRole('button', { name: 'Login' });
+  169 |     await expect(loginButton).toBeVisible();
+  170 |     await expect(loginButton).toBeEnabled();
+  171 | 
+  172 |     // Click login
+  173 |     await loginButton.click();
+  174 | 
+  175 |     // Wait for navigation
+  176 |     await page.waitForTimeout(2000);
+  177 | 
+  178 |     // Verify successful login
+  179 |     await expect(page).toHaveURL(/dashboard/i);
+  180 |     const dashboardLink = page.getByRole('link', { name: 'Dashboard' });
+  181 |     await expect(dashboardLink).toBeVisible();
+  182 |   });
+  183 | 
+  184 |   // ===== SOFT ASSERTIONS =====
+  185 |   test('Soft Assertions - Continue testing after failure', async ({ page }) => {
+  186 |     // Soft assertions don't stop the test immediately
+  187 |     await expect.soft(page).toHaveTitle(/OrangeHRM/i);
+  188 |     
+  189 |     const usernameField = page.getByPlaceholder('Username');
+  190 |     await expect.soft(usernameField).toBeVisible();
+  191 |     await expect.soft(usernameField).toBeEditable();
+  192 | 
+  193 |     // Test continues even if previous soft assertions fail
+  194 |     await usernameField.fill('Admin');
+  195 |     await expect.soft(usernameField).toHaveValue('Admin');
+  196 |   });
+  197 | 
+  198 |   // ===== NEGATION ASSERTIONS =====
+  199 |   test('Negation Assertions - Not assertions', async ({ page }) => {
+  200 |     const usernameField = page.getByPlaceholder('Username');
+  201 |     
+  202 |     await expect(usernameField).not.toHaveValue('Admin');
+  203 |     await expect(usernameField).not.toBeDisabled();
+  204 |     await expect(usernameField).not.toBeHidden();
+  205 |     
+  206 |     const nonExistentElement = page.locator('.non-existent-class');
+  207 |     await expect(nonExistentElement).not.toBeVisible();
+  208 |   });
+  209 | 
+  210 |   // ===== TIMEOUT ASSERTIONS =====
+  211 |   test('Assertions with Custom Timeout', async ({ page }) => {
+  212 |     const usernameField = page.getByPlaceholder('Username');
+  213 |     
+  214 |     // Default timeout is 5000ms, can be customized
+  215 |     await expect(usernameField).toBeVisible({ timeout: 10000 });
+  216 |     await expect(usernameField).toBeEditable({ timeout: 5000 });
+  217 |   });
+  218 | 
+  219 |   // ===== ARRAY ASSERTIONS =====
+  220 |   test('Array/Collection Assertions', async ({ page }) => {
+  221 |     const inputs = page.locator('input[type="text"]');
+  222 |     
+  223 |     // Check count
+  224 |     const count = await inputs.count();
+  225 |     expect(count).toBeGreaterThan(0);
+  226 | 
+  227 |     // Check each input is visible
+  228 |     for (let i = 0; i < count; i++) {
+  229 |       await expect(inputs.nth(i)).toBeVisible();
+  230 |     }
+  231 |   });
+  232 | 
+  233 |   // ===== PROMISE-BASED ASSERTIONS =====
+  234 |   test('Promise-based Assertions', async ({ page }) => {
+  235 |     const usernameField = page.getByPlaceholder('Username');
+  236 |     
+  237 |     // Get and assert text content
+  238 |     const inputType = await usernameField.getAttribute('type');
+> 239 |     expect(inputType).toBe('text');
+      |                       ^ Error: expect(received).toBe(expected) // Object.is equality
+  240 | 
+  241 |     // Get and assert placeholder
+  242 |     const placeholder = await usernameField.getAttribute('placeholder');
+  243 |     expect(placeholder).toBe('Username');
+  244 |   });
+  245 | });
+  246 | 
+  247 | 
+  248 | 
+```
