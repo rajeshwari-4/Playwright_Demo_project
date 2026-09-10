@@ -1,6 +1,5 @@
-const browser = await chromium.launch();
-const context= await browser.newContext();
-const page = await context.newPage();
+import { test } from '@playwright/test';
 
-
-await page.goto ('https://www.google.com/');
+test('navigate to google', async ({ page }) => {
+  await page.goto('https://www.google.com/');
+});
